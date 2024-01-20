@@ -1,0 +1,9 @@
+segments 2 60
+u -2 2
+v 0 6.2832
+coefs 2, 5, 7, 5
+scale 50
+
+x = (a + ((exp((d*b*sin(c*v)))-1)/ (exp((d*b*sin(c*v)))+1))/ (b+0.0001*(b == 0))) * cos(v)
+y = (a + ((exp((d*b*sin(c*v)))-1)/ (exp((d*b*sin(c*v)))+1))/ (b+0.0001*(b == 0))) * sin(v)
+z = u

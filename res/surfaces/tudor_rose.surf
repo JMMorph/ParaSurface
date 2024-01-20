@@ -1,0 +1,9 @@
+segments 160 60
+u 0 3.1416
+v 0 6.2832
+coefs 0.9, 0.2, 4, 8
+scale 200
+
+x = (cos(v)*cos(v) * max(abs(sin(c*u)), a-b*abs(cos(d*u))))*cos(u)*cos(v)
+y = (cos(v)*cos(v) * max(abs(sin(c*u)), a-b*abs(cos(d*u))))*sin(v)*0.5
+z = (cos(v)*cos(v) * max(abs(sin(c*u)), a-b*abs(cos(d*u))))*sin(u)*cos(v)

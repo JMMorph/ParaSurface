@@ -1,0 +1,9 @@
+segments 30 50
+u -1.5708 1.5708
+v 0 3.1416
+coefs 1, 0, 0
+scale 100
+
+z = 0.5*( ((2*(cos(u + b) * sin (v + c))**2 - (sin(u + b) * sin(v + c))**2 - cos(v + c)**2)*((sin(u + b) * sin(v + c))**2 + (cos(u + b) * sin (v + c))**2 + cos(v + c)**2)) + (2*(sin(u + b) * sin(v + c))*cos(v + c)*((sin(u + b) * sin(v + c))**2 - cos(v + c)**2) + (cos(u + b) * sin (v + c))*cos(v + c)*((cos(u + b) * sin (v + c))**2 - cos(v + c)**2)) + ((sin(u + b) * sin(v + c))*(cos(u + b) * sin (v + c))*((sin(u + b) * sin(v + c))**2 - (cos(u + b) * sin (v + c))**2)) )
+y = 0.5* (sqrt (3) *((((sin(u + b) * sin(v + c))**2 - cos(v + c)**2) * ((sin(u + b) * sin(v + c))**2 + (cos(u + b) * sin (v + c))**2 + cos(v + c)**2) + (cos(u + b) * sin (v + c))*cos(v + c)*(cos(v + c)**2 - (cos(u + b) * sin (v + c))**2)) + (sin(u + b) * sin(v + c)) * (cos(u + b) * sin (v + c)) * ((sin(u + b) * sin(v + c))**2 - (cos(u + b) * sin (v + c))**2)) )
+x = 0.125 * ((sin(u + b) * sin(v + c)) + (cos(u + b) * sin (v + c)) + cos(v + c)) * (((sin(u + b) * sin(v + c)) + (cos(u + b) * sin (v + c)) + cos(v + c))**3 + 4*((sin(u + b) * sin(v + c)) - (cos(u + b) * sin (v + c))) * (cos(v + c) - (sin(u + b) * sin(v + c))) * ((cos(u + b) * sin (v + c)) - cos(v + c)))

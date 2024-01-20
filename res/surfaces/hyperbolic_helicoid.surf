@@ -1,0 +1,9 @@
+segments 400 10
+u -4 4
+v -4 4
+coefs 6
+scale 100
+ 
+x = sinh(v)*cos(a*u)/( 1 + cosh(u)*cosh(v) )
+y = cosh(v)*sinh(u)/( 1 + cosh(u)*cosh(v) )
+z = sinh(v)*sin(a*u)/( 1 + cosh(u)*cosh(v) )

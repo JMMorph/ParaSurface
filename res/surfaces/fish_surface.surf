@@ -1,0 +1,9 @@
+segments 70 70
+u 0 3.1416
+v 0 6.2832
+coefs 2, 4
+scale 100
+
+x = (cos(u) - cos(a*u))*cos(v) / b
+y = (sin(u) - sin(a*u))*sin(v) / b
+z = cos(u)

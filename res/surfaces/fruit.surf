@@ -1,0 +1,9 @@
+segments 30 30
+u -3.1416 3.1416
+v -3.1416 3.1416
+coefs 5, 4.8, 4.8, 6, 2
+scale 10
+
+x = cos(u)*(a + b*cos(v)) + (v/pi)
+y = -c*log10(abs(1-v*0.3157)) + d*sin(v) + f*cos(v)
+z = sin(u)*(a + b*cos(v)) + 0.25*cos(5*u)

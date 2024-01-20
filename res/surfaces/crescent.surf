@@ -1,0 +1,9 @@
+segments 20 40
+u 0 1
+v 0 1
+coffs 2, 2, 3, 0, 0
+scale 40
+
+x = (a + sin(b * pi * u + d)*sin(b * pi * v + f)) * sin(c * pi * v + f)
+y = cos(b * pi * u + d) * sin(b * pi * v + f) + 4*v -2
+z = (a + sin(b * pi * u + d)*sin(b * pi * v + f)) * cos(c * pi * v + f)

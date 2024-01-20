@@ -1,0 +1,9 @@
+segments 50 50
+u 0 6.2838
+v 0 6.2838
+coefs 3, 2, 2, 0
+scale 40
+
+x = (a + cos(u/c + d) * sin(v) - sin(u/c + d) * sin(b*v))*cos(u)
+y = sin(u/c + d) * sin(v) + cos(u/c + d) * sin(b*v)
+z = (a + cos(u/c + d) * sin(v) - sin(u/c + d) * sin(b*v))*sin(u)

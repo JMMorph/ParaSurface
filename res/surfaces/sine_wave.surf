@@ -1,0 +1,9 @@
+segments 50 30
+u 0 6.2838
+v 0 12.5664
+coefs 1, 1, 1, 0, 0.5
+scale 20
+
+x = f * v * cos(u)
+y = f * a * (cos(b * v + c * v) - d * v)
+z = f * v * sin(u)

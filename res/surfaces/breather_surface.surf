@@ -1,0 +1,9 @@
+segments 50 80
+u -15 15
+v 0 75.3982
+coefs 0.4
+scale 20
+
+x = 2*sqrt(abs(1 - a**2))*cosh(a*u) * ( -(sqrt(abs(1 - a**2))*cos(v)*cos(sqrt(abs(1 - a**2))*v)) - (sin(v)*sin(sqrt(abs(1 - a**2))*v)) )/(a * ( (sqrt(abs(1 - a**2))*cosh( a*u ))**2 + (a * sin( sqrt(abs(1 - a**2))*v ))**2 )+0.000001)
+y = -u + ( 2*abs(1 - a**2)*cosh( a*u ) * sinh( a*u)/(a * ( (sqrt(abs(1 - a**2))*cosh( a*u ))**2 + (a * sin( sqrt(abs(1 - a**2))*v ))**2 )+0.000001) )
+z = 2*sqrt(abs(1 - a**2))*cosh( a*u ) * ( -(sqrt(abs(1 - a**2))*sin(v)*cos(sqrt(abs(1 - a**2))*v)) + (cos(v)*sin(sqrt(abs(1 - a**2))*v)) )/(a * ( (sqrt(abs(1 - a**2))*cosh( a*u ))**2 + (a * sin( sqrt(abs(1 - a**2))*v ))**2 )+0.000001)

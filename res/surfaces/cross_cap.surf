@@ -1,0 +1,9 @@
+segments 70 70
+u 0 1
+v 0 6.2838
+coefs 2, 2
+scale 100
+
+x = 1 - u**2 + u**2 * sin(v)**2
+y = u**2 * sin(v)**2 + a*u**2 *sin(v)*cos(v)
+z = sqrt( abs((1-u**2)/b) )*u*( sin(v)+cos(v) )

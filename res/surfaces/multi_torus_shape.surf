@@ -1,0 +1,9 @@
+segments 80 30
+u 0 6.2838
+v 0 6.2838
+coefs 7, 2, 1, 0.5
+scale 20
+
+x = (-1*(cos(u)<0) + (cos(u)>=0))*abs(cos(u))**c * (a + b * (-1*(cos(v)<0) + (cos(v)>=0))*abs(cos(v))**d)
+y = b*(-1*(sin(v)<0) + (sin(v)>=0))*abs(sin(v))**d
+z = (-1*(sin(u)<0) + (sin(u)>=0))*abs(sin(u))**c* (a + b * (-1*(cos(v)<0) + (cos(v)>=0))*abs(cos(v))**d)

@@ -1,0 +1,9 @@
+segments 50 50
+u 0 6.2838
+v 0 6.2838
+coefs 3, 15, 0
+scale 10
+
+x = (a * cos(u) * (1 + sin(u)) + (4 * ( 1 - cos(u)/2 ))* cos(u)* cos(v+c)) * (u <= pi) + (a*cos(u)*(1 + sin (u)) + (4 * ( 1 - cos(u)/2 ))*cos(v + pi+c)) * ( u > pi )
+y = (b * sin(u) + (4 * ( 1 - cos(u)/2 )) * sin(u) * cos(v+c))*(u <= pi) + (b*sin(u))*(u > pi)
+z = ((4 * ( 1 - cos(u)/2 )) * sin(v+c))*(u <= pi) + ((4 * ( 1 - cos(u)/2 ))*sin(v+c))*(u > pi)

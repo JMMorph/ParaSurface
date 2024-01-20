@@ -1,0 +1,9 @@
+segments 60 30
+u 0 6.2832
+v 0 6.2832
+coefs 5, 1
+scale 20
+
+x = (a + b*(2*cos(v) + cos(2*v)))*cos(u)
+y = b*(2*sin(v) - sin(2*v))
+z = (a + b*(2*cos(v) + cos(2*v)))*sin(u)

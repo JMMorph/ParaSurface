@@ -1,0 +1,9 @@
+segments 50 50
+u 0 3.1416
+v 0 3.1416
+coefs 1, 0, 0
+scale 50
+
+x = ( sqrt(2)*cos(v)**2 * cos(2*(u)) + cos((u))*sin(2*(v)) )/(2 - a*(sqrt(2) * sin(3*(u+c))*sin(2*(v+b))))
+y = ( 3*cos(v)**2 )/(2 - a*(sqrt(2) * sin(3*(u+c))*sin(2*(v+b))))
+z = ( sqrt(2)*cos(v)**2 * sin(2*(u)) - sin((u))*sin(2*(v)) )/(2 - a*(sqrt(2) * sin(3*(u+c))*sin(2*(v+b))))

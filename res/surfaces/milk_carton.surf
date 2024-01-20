@@ -1,0 +1,9 @@
+segments 25 25
+u -1 1
+v -3.1416 3.1416
+coefs
+scale 100
+
+x = (1 + u) * cos(v)
+y = 2*u
+z = (1 - u) * sin(v)

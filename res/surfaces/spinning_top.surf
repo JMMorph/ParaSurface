@@ -1,0 +1,9 @@
+segments 30 30
+u -1 1
+v 0 6.2832
+coefs
+scale 100
+
+x = (abs(u)-1) ** 2 * cos(v)
+y = u
+z = (abs(u)-1) ** 2 * sin(v)

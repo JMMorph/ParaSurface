@@ -1,0 +1,132 @@
+STRINGTABLE Osurf {
+
+    Osurf                               "Parametric Surface Generator";
+
+    ID_BASIC_PROPERTIES                 "Basic properties";
+
+    SURF_TYPE                           "Surface type";
+    SURF_RESET                          "Reset";
+
+    SURF_ORIENTATION                    "Orientation";
+    SURF_ORIENTATION_XP                 "X+";
+    SURF_ORIENTATION_XN                 "X-";
+    SURF_ORIENTATION_YP                 "Y+";
+    SURF_ORIENTATION_YN                 "Y-";
+    SURF_ORIENTATION_ZP                 "Z+";
+    SURF_ORIENTATION_ZN                 "Z-";
+
+    SURF_U_SEGMENTS                     "u|Segments";
+    SURF_U_MIN                          "u|Min";
+    SURF_U_MAX                          "u|Max";
+    SURF_U_PERCENT                      "u|Percent";
+    SURF_U_OFFSET                       "u|Offset";
+    SURF_WELD                           "Weld";
+
+    SURF_SCALE                          "Scale";
+    SURF_V_SEGMENTS                     "v|Segments";
+    SURF_V_MIN                          "v|Min";
+    SURF_V_MAX                          "v|Max";
+    SURF_V_PERCENT                      "v|Percent";
+    SURF_V_OFFSET                       "v|Offset";
+    SURF_UPDATE_UVW                     "Update UVW";
+
+    ID_COEFFICIENTS                     "Coefficients";
+    SURF_NUMBER_COEFFICIENTS            "Used: ";
+    SURF_COEFFICIENT_A                  "a";
+    SURF_COEFFICIENT_B                  "b";
+    SURF_COEFFICIENT_C                  "c";
+    SURF_COEFFICIENT_D                  "d";
+    SURF_COEFFICIENT_F                  "f";
+    SURF_COEFFICIENT_G                  "g";
+    SURF_COEFFICIENT_H                  "h";
+    SURF_COEFFICIENT_I                  "i";
+    SURF_COEFFICIENT_J                  "j";
+    SURF_COEFFICIENT_K                  "k";
+    SURF_COEFFICIENT_L                  "l";
+    SURF_COEFFICIENT_M                  "m";
+    SURF_COEFFICIENT_N                  "n";
+    SURF_COEFFICIENT_O                  "o";
+    SURF_COEFFICIENT_P                  "p";
+    SURF_COEFFICIENT_Q                  "q";
+    SURF_COEFFICIENT_R                  "r";
+    SURF_COEFFICIENT_S                  "s";
+    SURF_COEFFICIENT_T                  "t";
+
+    ID_CUSTOM_SURFACE                   "Custom surface";
+    SURF_CUSTOM_X                       "x(u,v) =";
+    SURF_CUSTOM_Y                       "y(u,v) =";
+    SURF_CUSTOM_Z                       "z(u,v) =";
+    SURF_CUSTOM_AUX                     "aux =";
+
+    ID_RATIO                            "Aspect ratio";
+    SURF_ASPECT_RATIO_X                 "Aspect X";
+    SURF_ASPECT_RATIO_Y                 "Aspect Y";
+    SURF_ASPECT_RATIO_Z                 "Aspect Z";
+    SURF_GRID_X                         "% Grid X";
+    SURF_GRID_Y                         "% Grid Y";
+    SURF_GRID_Z                         "% Grid Z";
+
+    ID_SURFACE_INFO                     "Surface info";
+
+    SURF_SURFACE_NAME                   "Name"; 
+    SURF_SURFACE_COEFFICIENTS           "Coefficients";
+    SURF_SURFACE_EQUATIONS              "Definition";
+
+
+    SURF_TYPE_MONKEY_SADDLE             "Monkey Saddle";
+    SURF_TYPE_SINE_WAVE                 "Sine Wave";
+    SURF_TYPE_SPIRAL_WAVE               "Spiral Wave";
+    SURF_TYPE_DINIS_SURFACE             "Dini's Surface";
+    SURF_TYPE_WAVE_BALL                 "Wave Ball";
+    SURF_TYPE_HYPERBOLIC_HELICOID       "Hyperbolic Helicoid";
+    SURF_TYPE_CROSSED_THROUGH_SURFACE   "Crossed Through Surface";
+    SURF_TYPE_MOBIUS_STRIP              "Mobius Strip";
+    SURF_TYPE_SINE_SURFACE              "Sine Surface";
+    SURF_TYPE_COSINE_SURFACE            "Cosine Surface";
+    SURF_TYPE_SINE_CUBE                 "Sine Cube";
+    SURF_TYPE_EIGHT_SURFACE             "Eight Surface";
+    SURF_TYPE_HYPERBOLIC_OCTAHEDRON     "Hyperbolic Octahedron";
+    SURF_TYPE_BREATHER_SURFACE          "Breather Surface";
+    SURF_TYPE_PSEUDO_CROSS_CAP          "Pseudo Cross Cap";
+    SURF_TYPE_BOY_SURFACE_I             "Boy Surface I";
+    SURF_TYPE_BOY_SURFACE_II            "Boy Surface II";
+    SURF_TYPE_TWISTED_SPHERE            "Twisted Sphere";
+    SURF_TYPE_KLEIN_CYCLOID             "Klein Cycloid";
+    SURF_TYPE_JENNER_KLEIN_BOTTLE       "Jenner-Klein Bottle";
+    SURF_TYPE_STEREOGRAPHIC_SPHERE      "Stereographic Sphere";
+    SURF_TYPE_CROSS_CAP                 "Cross Cap";
+    SURF_TYPE_STROPHOID_CILINDER        "Strophoid Cylinder";
+    SURF_TYPE_KLEIN_BOTTLE              "Klein Bottle";
+    SURF_TYPE_SEASHELL_1                "Seashell 1";
+    SURF_TYPE_SEASHELL_2                "Seashell 2";
+    SURF_TYPE_PILLOW                    "Pillow";
+    SURF_TYPE_MILK_CARTON               "Milk Carton";
+    SURF_TYPE_SPINNING_TOP              "Spinning Top";
+    SURF_TYPE_BOWTIE                    "Bowtie";
+    SURF_TYPE_CRESCENT                  "Crescent";
+    SURF_TYPE_LAWSON_BOTTLE             "Lawson Bottle";
+    SURF_TYPE_DROP_OR_EGG               "Drop Or Egg";
+    SURF_TYPE_APPLE_I                   "Apple I";
+    SURF_TYPE_FRUIT                     "Fruit";
+    SURF_TYPE_CORKSCREW                 "Corkscrew";
+    SURF_TYPE_GEAR_TUBE                 "Gear Tube";
+    SURF_TYPE_UMBRELLA                  "Umbrella";
+    SURF_TYPE_TUDOR_ROSE                "Tudor Rose";
+    SURF_TYPE_INVOLUTE_CONOID           "Involute Conoid";
+    SURF_TYPE_FISH_SURFACE              "Fish Surface";
+    SURF_TYPE_ASYMETRIC_TORUS           "Asymetric Torus";
+    SURF_TYPE_TRICUSPID_TORUS           "Tricuspid Torus";
+    SURF_TYPE_ASTROID_TORUS             "Astroid Torus";
+    SURF_TYPE_UMBILIC_TORUS             "Umbilic Torus";
+    SURF_TYPE_EIGHT_TORUS               "Eight Torus";
+    SURF_TYPE_TWISTED_EIGHT_TORUS       "Twisted Eight Torus";
+    SURF_TYPE_WAVE_TORUS                "Wave Torus";
+    SURF_TYPE_GEAR_WHEEL_TORUS          "Gear Wheel Torus";
+    SURF_TYPE_SPIRAL_TORUS              "Spiral Torus";
+    SURF_TYPE_TORUS_KNOT                "Torus Knot";
+    SURF_TYPE_MULTI_TORUS_SHAPE         "Multi Torus Shape";
+    SURF_TYPE_BRAIDED_TORUS             "Braided Torus";
+    SURF_TYPE_ELLIPTIC_TORUS            "Elliptic Torus";
+    SURF_TYPE_CUSTOM                    "Custom surface";
+
+}

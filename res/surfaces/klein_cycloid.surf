@@ -1,0 +1,9 @@
+segments 200 15
+u 0 37.6991
+v 0 6.2832
+coefs 11, 3, 2
+scale 10
+
+x = cos(u/c)*cos(u/b)*(a+cos(v)) + sin(u/b)*sin(v)*cos(v)
+y = -sin(u/b)*(a + cos(v)) + cos(u/b)*sin(v)*cos (v)
+z = sin(u/c)*cos(u/b)*(a+cos(v)) + sin(u/b)*sin(v)*cos(v)

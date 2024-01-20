@@ -1,0 +1,9 @@
+segments 20 80
+u 0 2
+v 0 2
+coefs 1, 5, 1, 3
+scale 40
+
+x = a*(1 - 0.5*v)*cos( d*v*pi ) * ( 1 + cos( u*pi ) ) + c*cos( d*v*pi )
+y = b*0.5*v + a*(1 - 0.5*v)*sin(u *pi )
+z = a*(1 - 0.5*v)*sin( d*v*pi ) * ( 1 + cos( u*pi ) ) + c*sin( d*v*pi )

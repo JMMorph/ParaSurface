@@ -1,0 +1,9 @@
+segments 60 60
+u 0 6.2838
+v 0 6.2838
+coefs 2, 1.5, 5, 0.5, 1
+scale 20
+
+x = (10 * d + (a + ((exp((2*b*e*sin(c*v)))-1)/ (exp((2*b*e*sin(c*v)))+1))/b) * cos(v)) * cos(u)
+y = (a + ((exp((2*b*e*sin(c*v)))-1)/ (exp((2*b*e*sin(c*v)))+1))/b)*sin(v)
+z = -(10 * d + (a + ((exp((2*b*e*sin(c*v)))-1)/ (exp((2*b*e*sin(c*v)))+1))/b) * cos(v)) * sin(u)

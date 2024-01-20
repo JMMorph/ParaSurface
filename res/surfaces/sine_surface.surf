@@ -1,0 +1,9 @@
+segments 50 50
+u -3.1416 3.1416
+v -3.1416 3.1416
+coefs 
+scale 100
+
+x = sin(u)
+y = sin(u + v)
+z = sin(v)

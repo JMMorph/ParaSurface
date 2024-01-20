@@ -1,0 +1,9 @@
+segments 80 25
+u 0 18.8496 
+v 0 6.2832 
+coefs 2, 3, 1, 0.5
+scale 35
+
+x = a * (c-(exp( u / (6*pi) )))*cos(u)*cos(d*v)*cos(d*v)
+y = -(c - exp(u/(b*pi)) - sin(v) + (exp( u / (6*pi) ))*sin(v))
+z = a*((exp( u / (6*pi) ))-c)*sin(u)*cos(d*v)*cos(d*v)

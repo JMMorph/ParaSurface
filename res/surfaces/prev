@@ -1,0 +1,1905 @@
+39# Python tag Plugin to create parametric complex Meshex
+
+import c4d
+import math
+
+from math import sin, cos, asin, acos, tan, atan, atan2, hypot, log, log10, sqrt, log1p
+from math import exp, pi, copysign, cosh, sinh, ceil, floor,fmod, sqrt
+
+from c4d import utils
+
+obj=op.GetObject()# Object to work with
+datos=op.GetUserDataContainer() # Base Container
+
+#-----------------------------------------------------------------------------------------
+# Variables to define object
+
+surface_type = 0
+Nu = 50 ; Nv = 50
+uMin = 0 ; uMax = 1
+vMin = 0 ; vMax = 1
+percent_u = 1; percent_v = 1
+u_rot = 0; v_rot = 0
+a = 1 ; b = 1 ; c = 1; d = 1 ; e = 1; f = 1
+as_x = 1; as_y = 1; as_z = 1
+ornt = 0
+scale = 1
+weld = 1;
+i = "Parametric Surfaces Plugin by Miguel Medina"
+Name = "testing"
+Coef = "todos"
+
+
+# Variables to create the object
+xf = 0 ; yf = 0; zf = 0 # General Vertex
+
+
+#-----------------------------------------------------------------------------------------
+
+#-----------------------------------------00000
+# 'Formula 0: Klein Bottle
+'Formula0'
+
+
+    r = lambda u: 4 * ( 1 - cos(u)/2 )
+
+x = \
+    (a * cos(u) * (1 + sin(u)) + r(u)* cos(u)* cos(v+c)) * (u <= pi) + \
+    (a*cos(u)*(1 + sin (u)) + r(u)*cos(v + pi+c)) * ( u > pi )
+
+y = \
+    (b * sin(u) + r(u) * sin(u) * cos(v+c))*(u <= pi) + \
+    (b*sin(u))*(u > pi)
+
+z = \
+    (r(u) * sin(v+c))*(u <= pi) + \
+    (r(u)*sin(v+c))*(u > pi)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 1: Mobius Strip
+'Formula1'
+
+x =(a + u * cos(v*b / 2 + c)) * cos(v)
+y = u * sin(v*b/ 2 + c)
+z = (a + u * cos(v*b / 2 + c)) * sin(v)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 2: Monkey Saddle
+'Formula2'
+
+x = u * a
+y = (u**3 - 3*u * v**2)*c
+z = v * b
+
+    
+
+#-----------------------------------------00000
+# 'Formula 3: Bagel 8
+'Formula3'
+
+x = (a + cos(u/c + d) * sin(v) - sin(u/c + d) * sin(b*v))*cos(u)
+y = sin(u/c + d) * sin(v) + cos(u/c + d) * sin(b*v)
+z = (a + cos(u/c + d) * sin(v) - sin(u/c + d) * sin(b*v))*sin(u)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 4: Seashell 1
+'Formula4'
+, b
+    b = b + 0.0001*(b==0)
+    hf = lambda u: exp( u / (6*pi) )
+x = a * (c-hf(u))*cos(u)*cos(d*v)*cos(d*v)
+y = -(c - exp(u/(b*pi)) - sin(v) + hf(u)*sin(v))
+z = a*(hf(u)-c)*sin(u)*cos(d*v)*cos(d*v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 5: Seashell 2
+'Formula5'
+, hf
+    hf = lambda u,v: 1 - 0.5*v
+x = a*hf(u,v)*cos( d*v*pi ) * ( 1 + cos( u*pi ) ) + c*cos( d*v*pi )
+y = b*0.5*v + a*hf(u,v)*sin(u *pi )
+z = a*hf(u,v)*sin( d*v*pi ) * ( 1 + cos( u*pi ) ) + c*sin( d*v*pi )
+
+    
+
+#-----------------------------------------00000
+# 'Formula 6 Sine surface
+'Formula6'
+
+x = sin(u)
+y = sin(u + v)
+z = sin(v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 7 Cosine surface
+'Formula7'
+
+x = cos(u)
+y = cos(u + v)
+z = cos(v)
+
+
+    
+
+#-----------------------------------------00000
+# 'Formula 8 Sine cube
+'Formula8'
+
+x = sin(u) * sin(v)
+y = cos(u) * sin(v)
+z = cos(u) * cos(v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 9 Pillow
+'Formula9'
+
+x = cos(u)
+y = a * sin(u) * sin(v)
+z = cos(v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 10 Milk Carton
+'Formula10'
+
+x = (1 + u) * cos(v)
+y = 2*u
+z = (1 - u) * sin(v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 11 8 Surface
+'Formula11'
+
+x = cos(u) * sin(2 * v)
+y = sin(v)
+z = sin(u) * sin(2 * v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 12 Spinning top
+'Formula12'
+
+x = (abs(u)-1) ** 2 * cos(v)
+y = u
+z = (abs(u)-1) ** 2 * sin(v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 13 Hyperbolic Octahedron
+'Formula13'
+
+x = (cos(u) * cos(v))**3
+y = sin(v)**3
+z = (sin(u) * cos(v))**3
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 14 Breather Surface
+'Formula14'
+, df
+    df = lambda u,v: sqrt(abs(1 - a**2))
+    rf = lambda u,v: a * ( (df(u,v)*cosh( a*u ))**2 + (a * sin( df(u,v)*v ))**2 )+0.000001
+x = 2*df(u,v)*cosh(a*u) * ( -(df(u,v)*cos(v)*cos(df(u,v)*v)) - (sin(v)*sin(df(u,v)*v)) )/rf(u,v)
+y = -u + ( 2*abs(1 - a**2)*cosh( a*u ) * sinh( a*u)/rf(u,v) )
+z = 2*df(u,v)*cosh( a*u ) * ( -(df(u,v)*sin(v)*cos(df(u,v)*v)) + (cos(v)*sin(df(u,v)*v)) )/rf(u,v)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 15 Pseudo cross cap
+'Formula15'
+
+x = (1-u**2)*sin(v)
+y = u
+z = (1-u**2)*sin(2*v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 16 Bowtie
+'Formula16'
+
+x = sin(u) / (sqrt(2) + sin(v))
+y = cos(u) / (sqrt(2) + 1)
+z = sin(u) / (sqrt(2) + cos(v))
+
+    
+
+
+
+#-----------------------------------------00000
+# 'Formula 17 Cresent
+'Formula17'
+
+x = (a + sin(b * pi * u + d)*sin(b * pi * v + e)) * sin(c * pi * v + e)
+y = cos(b * pi * u + d) * sin(b * pi * v + e) + 4*v -2
+z = (a + sin(b * pi * u + d)*sin(b * pi * v + e)) * cos(c * pi * v + e)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 18 Boy Surface I
+'Formula18'
+, df
+    df = lambda u,v: 2 - a*(sqrt(2) * sin(3*(u+c))*sin(2*(v+b)) )
+x = ( sqrt(2)*cos(v)**2 * cos(2*(u)) + cos((u))*sin(2*(v)) )/df(u,v)
+y = ( 3*cos(v)**2 )/df(u,v)
+z = ( sqrt(2)*cos(v)**2 * sin(2*(u)) - sin((u))*sin(2*(v)) )/df(u,v)
+
+    
+
+
+
+
+#-----------------------------------------00000
+# 'Formula 19 Boy Surface II
+'Formula19'
+, Af, Bf, Cf, df
+
+    Af = lambda u,v: sin(u + b) * sin(v + c)
+    Bf = lambda u,v: cos(u + b) * sin (v + c)
+    Cf = lambda u,v: cos(v + c)
+
+x = 0.5*( \
+    ((2*Bf(u,v)**2 - Af(u,v)**2 - Cf(u,v)**2)*(Af(u,v)**2 + Bf(u,v)**2 + Cf(u,v)**2)) + \
+    (2*Af(u,v)*Cf(u,v)*(Af(u,v)**2 - Cf(u,v)**2) + Bf(u,v)*Cf(u,v)*(Bf(u,v)**2 - Cf(u,v)**2)) + \
+    (Af(u,v)*Bf(u,v)*(Af(u,v)**2 - Bf(u,v)**2)) )
+
+
+    df = lambda u,v: (Af(u,v)**2 - Cf(u,v)**2) * (Af(u,v)**2 + Bf(u,v)**2 + Cf(u,v)**2) + Bf(u,v)*Cf(u,v)*(Cf(u,v)**2 - Bf(u,v)**2)
+z = 0.5* (sqrt (3) *(df(u,v) + Af(u,v) * Bf(u,v) * (Af(u,v)**2 - Bf(u,v)**2)) )
+
+
+y = 0.125 * (Af(u,v) + Bf(u,v) + Cf(u,v)) * ((Af(u,v) + Bf(u,v) + Cf(u,v))**3 + 4*(Af(u,v) - Bf(u,v)) * (Cf(u,v) - Af(u,v)) * (Bf(u,v) - Cf(u,v)))
+
+    
+
+#-----------------------------------------00000
+# 'Formula 20 Lawson Bottle
+'Formula20'
+, df
+    df = lambda u,v: 1 + (sin(u+a)*sin(v) + sin(u/2 +a)*cos(v)) / sqrt(2)
+x = (sin(u+a)*sin(v) - sin(u/2 +a)*cos(v))*(sqrt(0.5))/df(u,v)
+y = cos(u+a)*sin(v)/df(u,v)
+z = cos(u/2 +a )*cos(v)/df(u,v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 21 Drop or Egg
+'Formula21'
+
+x = a*(b - cos(u))*sin(u)*cos(v)
+y = c*cos(u)
+z = a*(b - cos(u))*sin(u)*sin(v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 22 Apple 1
+'Formula22'
+
+x = cos(u)*(4+a*cos(v));
+y = c*((cos(v) + sin(v)-1)*(1 + sin(v))*log10(abs(1-pi* v/10))+b*sin(v));
+z = sin(u)*(4+a*cos(v));
+
+    
+
+#-----------------------------------------00000
+# 'Formula 23 Fruit
+'Formula23'
+
+x = cos(u)*(a + b*cos(v)) + (v/pi)
+y = -c*log10(abs(1-v*0.3157)) + d*sin(v) + e*cos(v)
+z = sin(u)*(a + b*cos(v)) + 0.25*cos(5*u)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 24 Twisted Sphere
+'Formula24'
+
+x = a*cos(u)*cos(v)
+y = a*sin(v) + b*u
+z = a*sin(u)*cos(v)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 25 Corkscrew
+'Formula25'
+
+x = a*(1-abs(u))*cos(v) + b*(1-abs(u))*cos(u*c*pi)
+y = d*u
+z = a*(1-abs(u))*sin(v) + b*(1-abs(u))*sin(u*c*pi)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 26 Asymetric Torus
+'Formula26'
+
+x = (a + b*cos(v)*(c + sin(u)))*cos(u)
+y = b*sin(v)*(c + sin(u))
+z = (a + b*cos(v)*(c + sin(u)))*sin(u)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 27 Tricuspid Torus
+'Formula27'
+
+x = (a + b*(2*cos(v) + cos(2*v)))*cos(u)
+y = b*(2*sin(v) - sin(2*v))
+z = (a + b*(2*cos(v) + cos(2*v)))*sin(u)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 28 Astroid Torus
+'Formula28'
+
+x = (a + b*cos(v)**3)*cos(u)
+y = b*sin(v)**3
+z = (a + b*cos(v)**3)*sin(u)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 29 Umbilic Torus
+'Formula29'
+, c
+    c = c + 0.0001*(c==0)
+x = sin(u)*(a + cos(u/c - b*v) + 2*cos(u/c + v + d))
+y = sin(u/c - b*v) + 2*sin(u/c + v +d)
+z = cos(u)*(a + cos(u/c - b*v) + 2*cos(u/c + v + d))
+
+    
+
+#-----------------------------------------00000
+# 'Formula 30 8 Torus
+'Formula30'
+
+x = cos(u)*(a + sin(v)*cos(u) - sin(b*v)*sin(u)/c)
+y = sin(u)*sin(v) + cos(u)*sin(b*v)/c
+z = sin(u)*(a + sin(v)*cos(u) - sin(b*v)*sin(u)/c)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 31 Wave Torus
+'Formula31'
+
+x = (a + (b + c*sin(d*u))*cos(v))*cos(u)
+y = (b + c*sin(d*u))*sin(v)
+z = (a + (b + c*sin(d*u))*cos(v))*sin(u)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 32 Gearwheel Torus
+'Formula32'
+, tf, rf
+    tf = lambda u,v: 2*b*e*sin(c*v)
+    rf = lambda u,v: a + ((exp(tf(u,v))-1)/ (exp(tf(u,v))+1))/b
+
+x = (10 * d + rf(u,v) * cos(v)) * cos(u)
+y = rf(u,v)*sin(v)
+z = -(10 * d + rf(u,v) * cos(v)) * sin(u)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 33 Spiral Torus
+'Formula33'
+
+x = (a + b*cos(c*u) + d*cos(v))*cos(u)
+y = d*sin(v) + b*sin(c*u )
+z = (a + b*cos(c*u) + d*cos(v))*sin(u)
+
+    
+
+
+
+#-----------------------------------------00000
+# 'Formula 34 Torus Knot
+'Formula34'
+, tf
+    tf = lambda u,v: a + b*cos(d*u) + c*cos(v)
+x = -tf(u,v)*cos(e*u )
+y = c * sin(v) + b * sin(d * u )
+z = tf(u,v)*sin(e*u )
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 35 Multi Torus Shapes
+'Formula35'
+
+x = copysign(1,cos(u))*abs(cos(u))**c * (a + b * copysign(1,cos(v))*abs(cos(v))**d)
+y = b*copysign(1,sin(v))*abs(sin(v))**d
+z = copysign(1,sin(u))*abs(sin(u))**c* (a + b * copysign(1,cos(v))*abs(cos(v))**d)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 36 Braided Torus
+'Formula36'
+
+x = a*cos(v)*cos(u) + b*cos(u)*(1 + c*cos(d*u))
+y = e*(a*sin(v) + c*sin(d*u))
+z = a*cos(v)*cos(u) + b*sin(u)*(1 + c*cos(d*u))
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 37 Klein Cicloid
+'Formula37'
+, b, c
+    b = b + 0.0001*(b == 0)
+    c = c + 0.0001*(c == 0)
+x = cos(u/c)*cos(u/b)*(a+cos(v)) + sin(u/b)*sin(v)*cos(v)
+y = -sin(u/b)*(a + cos(v)) + cos(u/b)*sin(v)*cos (v)
+z = sin(u/c)*cos(u/b)*(a+cos(v)) + sin(u/b)*sin(v)*cos(v)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 38 Sine Wave
+'Formula38'
+
+x = e * v * cos(u)
+y = e * a * (cos(b * v + c * v) - d * v)
+z = e * v * sin(u)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 39 Jenner-Klein Bottle
+'Formula39'
+, df
+    df = lambda u,v: ((b+1) / 4) * cos((b+1) * u + d + 180/(c+0.0001)) + sqrt(a);
+x = b * cos(u) + cos(b * u) - df(u,v) * sin((b-1) * u/2) * cos(v + e);
+y = df(u,v) * sin(v + e);
+z = b * sin(u) - sin(b * u) - df(u,v) * cos((b-1) * u/2) * cos(v + e);
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 40 Tube
+'Formula40'
+, df, rf
+
+    df = lambda u,v: d*b*sin(c*v)
+    rf = lambda u,v: a + ((exp(df(u,v))-1)/ (exp(df(u,v))+1))/ (b+0.0001*(b == 0))
+
+x = rf(u,v) * cos(v)
+y = rf(u,v) * sin(v)
+z = u
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 41 Dini's Surface
+'Formula41'
+
+x = a*cos(u)*sin(v)
+y = a*( cos(v) + log( abs(tan(v/2+0.0001)) ) )  +  b*u
+z = a*sin(u)*sin(v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 42 Wave Ball
+'Formula42'
+
+x = a*u*cos( cos(u) )*cos(v)
+y = b*u*sin( cos(u) )
+z = a*u*cos( cos(u) )*sin(v)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 43 Hyperbolic Helicoid
+'Formula43'
+, df
+    df = lambda u,v: ( 1 + cosh(u)*cosh(v) )
+x = sinh(v)*cos(a*u)/df(u,v)
+y = cosh(v)*sinh(u)/df(u,v)
+z = sinh(v)*sin(a*u)/df(u,v)
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 44 Umbrella Surface
+'Formula44'
+, af1, af2
+
+    af1 = 1 / max(d,0.001)
+    af2 = a / (c + 0.001*(c == 0))
+
+x = abs(u)**(af1) * ((a-af2)*cos(abs(v)) + (e/10)*af2*cos( (c-1)*abs(v) ) )
+y = b*(1-abs(u))
+z = abs(u)**(af1) * ((a-af2)*sin(abs(v)) + (e/10)*af2*sin( (c-1)*abs(v)) )
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 45 Tudor Rose
+'Formula45'
+
+    rf = lambda u,v: cos(v)*cos(v) * max(abs(sin(c*u)), a-b*abs(cos(d*u)))
+x = rf(u,v)*cos(u)*cos(v)
+y = rf(u,v)*sin(v)*0.5
+z = rf(u,v)*sin(u)*cos(v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 46 Crossed Through surface
+'Formula46'
+
+x = u*sin(v)
+y = -(a* abs(u)**b *abs(sin(c*v))**d )/4
+z = u*cos(v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 47 Spiral waves
+'Formula47'
+
+x = v*cos(u)
+y = a*cos(b*u + c*v)
+z = v*sin(u)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 48 Elliptic Torus
+'Formula48'
+
+x = (a + cos(v))*cos(u)
+y = sin(v) + cos(v)
+z = (a + cos(v))*sin(u)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 49 Involute Conoid
+'Formula49'
+
+x = a*c*( cos(v)+v*sin(v))
+y = u*b
+z = a*u*( sin(v)-v*cos(v))
+
+    
+
+#-----------------------------------------00000
+# 'Formula 50 Stereographic Sphere
+'Formula50'
+, df
+    df = lambda u,v: u**2 + v**2 + 1
+x = b*a*u / df(u,v)
+y = b*(df(u,v) - 2)/ df(u,v)
+z = b*a*v / df(u,v)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 51 Cross Cup
+'Formula51'
+
+x = 1 - u**2 + u**2 * sin(v)**2
+y = u**2 * sin(v)**2 + a*u**2 *sin(v)*cos(v)
+z = sqrt( abs((1-u**2)/b) )*u*( sin(v)+cos(v) )
+
+    
+
+
+#-----------------------------------------00000
+# 'Formula 52 Strophoid Cylinder
+'Formula52'
+, df
+    df = lambda u,v: -a*(v**2 -1)/(v**2 + 1)
+x = ( b + df(u,v) )*cos(u)
+y = v*df(u,v)
+z = ( b + df(u,v) )*sin(u)
+
+    
+
+#-----------------------------------------00000
+# 'Formula 53 Fish Surface
+'Formula53'
+
+x = (cos(u) - cos(a*u))*cos(v) / b
+y = (sin(u) - sin(a*u))*sin(v) / b
+z = cos(u)
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#-----------------------------------------00000
+# 'Formula
+'Formula1000(u,v):
+
+x = u
+y = v
+z = u*v
+
+    
+
+
+#-----------------------------------------------------------------------------------------
+# Function to set default values
+def set_default'
+    global surface_type   # Use selected surface
+
+    # Define default values variables
+
+    Def_Nu = 50 ; Def_Nv = 50
+    Def_uMin = 0; Def_uMax = 2 * math.pi
+    Def_vMin = 0; Def_vMax = 2 * math.pi
+    percent_u = 1; percent_v = 1
+    u_rot = 0; v_rot = 0
+    Def_a = 0 ; Def_b = 0; Def_c = 0
+    Def_d = 0; Def_e = 0 ; Def_f = 0
+    Def_as_x = 1; Def_as_y = 1; Def_as_z = 1;
+    Def_ornt = 0;
+    Def_scale = 1;
+    weld = 1
+    Name ="None selected"
+    i = "\n"
+xeq = ""
+yeq = ""
+zeq = ""
+    extra = ""
+    Coef = "None"
+
+    #ID of surface type container
+    ID = c4d.DescID(c4d.DescLevel(c4d.ID_USERDATA, c4d.DTYPE_SUBCONTAINER,0), c4d.DescLevel(2))
+
+    # get all user data descriptions
+    for id, bc in op.GetUserDataContainer'
+
+        # check for ID 2
+        if id == ID:
+
+            # get cycle settings
+            cycleBC = bc.GetContainer(c4d.DESC_CYCLE)
+
+            # Set name of selected
+            for element in cycleBC:
+                if element[0] == surface_type:
+                    Name = str(element[1])
+
+
+
+    # Depending of the surface, asign new values
+
+    #-----------------------------------------00000
+    # 'Formula 0 Klein Bottle
+    if surface_type == 0:
+
+        Def_uMin = 0 ; Def_uMax = 2 * pi
+        Def_vMin = 0 ; Def_vMax = 2 * pi
+        Def_a = 3 ; Def_b = 15 ;
+    xeq = "x = a*cos(u) * (1 + sin(u)) + r*cos(u)*cos(v) if  u < π \n"
+    xeq = xeq + "   = a*cos(u) * (1 + sin(u)) + r*cos(v + π) if  u > π \n"
+    yeq = "y = b*sin(u) + r*sin(u) * cos(v) if  u < π  \n"
+    yeq = yeq + "   = b*sin(u)  if  u > π \n"
+    zeq = "z = r*sin(v) if  u < π \n"
+    zeq = zeq + "   = r*sin(v) if  u > π  \n"
+        i= i + "where r = 4*(1 - cos(u)/2)"
+        Coef = "a, b"
+
+
+
+
+    #-----------------------------------------00000
+    # 'Formula 1 Mobius strip
+    if surface_type == 1:
+
+        Def_Nu = 8 ; Def_Nv = 50
+        Def_uMin = -2 ; Def_uMax = 2
+        Def_vMin = 0 ; Def_vMax = 2 * pi
+        Def_a = 5 ; Def_b = 1 ;
+    xeq ="x = (a + u*cos(v/2)) * cos(v)\n"
+    yeq = "y = u*sin(v/2)\n"
+    zeq = "z = (a + u*cos(v/2)) * sin(v)"
+        Coef = "a"
+
+
+
+    #-----------------------------------------00000
+    # 'Formula 2 Monkey Saddle
+    if surface_type == 2:
+
+        Def_Nu = 20 ; Def_Nv = 20
+        Def_uMin = -1 ; Def_uMax = 1
+        Def_vMin = -1 ; Def_vMax = 1
+        Def_a = 5; Def_b = 5; Def_c = 2
+    xeq = "x = a * u\n"
+    yeq = "y = c * u^3 - 3*u*v^2\n"
+    zeq = "z = b * v\n"
+        Coef = "a, b, c"
+
+
+    #-----------------------------------------00000
+    # 'Formula 3 8 Torus
+    if surface_type == 3:
+
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 3; Def_b = 2; Def_c = 2; Def_scale = 2
+    xeq = "x = (a + cos(u/c)*sin(v)-sin(u/c)*sin(b*v)) * cos(u)  \n"
+    yeq = "y = sin(u/c)*sin(v) + cos(u/c)*sin(b*v)  \n"
+    zeq = "z = (a + cos(u/c)*sin(v)-sin(u/c)*sin(b*v)) * sin(u)  \n"
+        Coef = "a, b, c"
+
+
+
+    #-----------------------------------------00000
+    # 'Formula 4 Seashell 1
+    if surface_type == 4:
+
+        Def_Nu = 80 ; Def_Nv = 25
+        Def_uMin = 0 ; Def_uMax = 6*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 2; Def_b = 3; Def_scale = 2
+        Def_d = 0.5; Def_c = 1;
+    xeq = "x = a * (c-h)*cos(u)*cos(d*v)*cos(d*v) \n"
+    yeq = "y = -(c - exp(u/(b*π)) - sin(v) + h*sin(v)) \n"
+    zeq = "z = a*(h-c)*sin(u)*cos(d*v)*cos(d*v) \n"
+        Coef = "a, b"
+
+    #-----------------------------------------00000
+    # 'Formula 5 Seashell 2
+    if surface_type == 5:
+
+        Def_Nu = 20 ; Def_Nv = 80
+        Def_uMin = 0 ; Def_uMax = 2
+        Def_vMin = 0 ; Def_vMax = 2
+        Def_a = 1; Def_b = 5; Def_c = 1; Def_d = 3
+        Def_scale = 2
+    xeq = "x = a*h*cos(d*v*π)*(1 + cos(u*π)) + c*cos(d*v*π) \n"
+    yeq = "y = b*0.5*v + a*h*sin(u*π) \n"
+    zeq = "z = a*h*sin(d*v*π)*(1 + cos(u*π)) + c*sin(d*v*π) \n"
+        i = i + "Where h = 1 - 0.5*v \n"
+        i = i + "\n"
+        i = i + "a = width \n"
+        i = i + "b = heigh \n"
+        i = i + "c = Inner radius \n"
+        i = i + "d = Number of turns\n"
+        Coef = "a,b,c,d"
+
+
+    #-----------------------------------------00000
+    # 'Formula 6 Sine surface
+    if surface_type == 6:
+
+        Def_uMin = -math.pi ; Def_uMax = math.pi
+        Def_vMin = -math.pi ; Def_vMax = math.pi
+        Def_scale = 4
+    xeq = "x = sin(u)    \n"
+    yeq = "y = sin(u+v)    \n"
+    zeq = "z = sin(v)    \n"
+
+    #-----------------------------------------00000
+    # 'Formula 7 Cosine surface
+    if surface_type == 7:
+
+        Def_Nu = 35 ; Def_Nv = 35
+        Def_uMin = 0 ; Def_uMax = math.pi
+        Def_vMin = -math.pi ; Def_vMax = math.pi
+        Def_scale = 4
+    xeq = "x = cos(u)    \n"
+    yeq = "y = cos(u+v)    \n"
+    zeq = "z = cos(v)    \n"
+
+    #-----------------------------------------00000
+    # 'Formula 8 Sine cube
+    if surface_type == 8:
+
+        Def_Nu = 30 ; Def_Nv = 25
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = math.pi
+        Def_scale = 4
+    xeq = "x = sin(u)sin(v)    \n"
+    yeq = "y = cos(u)sin(v)    \n"
+    zeq = "z = cos(u)cos(v)    \n"
+
+    #-----------------------------------------00000
+    # 'Formula 9 Pillow
+    if surface_type == 9:
+
+        Def_Nu = 25 ; Def_Nv = 25
+        Def_uMin = 0 ; Def_uMax = math.pi
+        Def_vMin = -math.pi ; Def_vMax = math.pi
+        Def_scale = 4
+    xeq = "x = cos(u)   \n"
+    yeq = "y = a*sin(u)sin(v)  \n"
+    zeq = "z = cos(v)    \n"
+        Coef = "a"
+
+
+    #-----------------------------------------00000
+    # 'Formula 10 Milk Carton
+    if surface_type == 10:
+
+        Def_Nu = 25; Def_Nv = 25
+        Def_uMin = -1 ; Def_uMax = 1
+        Def_vMin = -math.pi; Def_vMax = math.pi
+        Def_scale = 4 ;
+    xeq = "x = (1 + u)*cos(v)   \n"
+    yeq = "y = 2*u   \n"
+    zeq = "z = (1 - u)*sin(v)   \n"
+
+    #-----------------------------------------00000
+    # 'Formula 11 8 Surface
+    if surface_type == 11:
+
+        Def_Nu = 30 ; Def_Nv = 30
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = -math.pi/2; Def_vMax = math.pi/2
+        Def_scale = 4 ;
+    xeq = "x = cos(u)sin(2v)  \n"
+    yeq = "y = sin(v)   \n"
+    zeq = "z = sin(u)sin(2v)   \n"
+
+    #-----------------------------------------00000
+    # 'Formula 12 Spinning top
+    if surface_type == 12:
+
+        Def_Nu = 30 ; Def_Nv = 30
+        Def_uMin = -1 ; Def_uMax = 1
+        Def_vMin = 0; Def_vMax = 2*math.pi
+        Def_scale = 4 ;
+    xeq = "x = (|u|-1)^2 * cos(v) \n"
+    yeq = "y = u \n"
+    zeq = "z = (|u|-1)^2 * sin(v) \n"
+
+    #-----------------------------------------00000
+    # 'Formula 13 Hyperbolic Octahedron
+    if surface_type == 13:
+
+        Def_Nu = 30 ; Def_Nv = 30
+        Def_uMin = -math.pi/2 ; Def_uMax = math.pi/2
+        Def_vMin = -math.pi ; Def_vMax = math.pi
+        Def_scale = 4 ;
+    xeq = "x = (cos(u)cos(v))^3  \n"
+    yeq = "y = sin(v)^3  \n"
+    zeq = "z = (sin(u)cos(v))^3 \n"
+
+
+    #-----------------------------------------00000
+    # 'Formula 14 Breather Surface
+    if surface_type == 14:
+
+        Def_Nu = 50 ; Def_Nv = 80
+        Def_uMin = -15 ; Def_uMax = 15
+        Def_vMin = 0 ; Def_vMax = 24*math.pi
+        Def_scale = 1 ; Def_a=0.4
+    xeq = "x = 2*w*cosh(a*u)(-(wcos(v)cos(v))-(sin(v)sin(w*v)) )/p  \n"
+    yeq = "y = -u + (2r*cosh(a*u)*sinh(a*u)/p)  \n"
+    zeq = "z = 2*w*cosh(a*u)(-(wsin(v)cos(v))+(cos(v)sin(w*v)) )/p  \n"
+        i = i + "Where \n"
+        i = i + "\n"
+        i = i + "r = 1-a^2\n"
+        i = i + "w = sqrt(r)\n"
+        i = i + "p = a*((w*cosh(a*u))^2 + (a*sin(w*v))^2) \n"
+        Coef = "a"
+
+
+    #-----------------------------------------00000
+    # 'Formula 15 Pseudo cross cap
+    if surface_type == 15:
+
+        Def_Nu = 30 ; Def_Nv = 40
+        Def_uMin = -1 ; Def_uMax = 1
+        Def_vMin = -math.pi ; Def_vMax = math.pi
+        Def_scale = 4 ;
+    xeq = "x = (1-u^2)*sin(v)  \n"
+    yeq = "y = u  \n"
+    zeq = "z = (1-u^2)*sin(2*v) \n"
+
+    #-----------------------------------------00000
+    # 'Formula 16 Bowtie
+    if surface_type == 16:
+
+        Def_Nu = 30 ; Def_Nv = 40
+        Def_uMin = -math.pi ; Def_uMax = math.pi
+        Def_vMin = -math.pi ; Def_vMax = math.pi
+        Def_scale = 4 ;
+    xeq = "x = sin(u) / (sqrt(2) + sin(v))  \n"
+    yeq = "y = cos(u) / (sqrt(2) + 1)  \n"
+    zeq = "z = sin(u) / (sqrt(2) + cos(v)) \n"
+
+    #-----------------------------------------00000
+    # 'Formula 17 Crescent
+    if surface_type == 17:
+
+        Def_Nu = 20 ; Def_Nv = 40
+        Def_uMin = 0 ; Def_uMax = 1
+        Def_vMin = 0 ; Def_vMax = 1
+        Def_scale = 2 ; Def_a = 2; Def_b = 2; Def_c=3; Def_e=0;
+    xeq = "x = (a + sin(b*π*u)*sin(b*π*v)) * sin(c*π*v)    \n"
+    yeq = "y = cos(b*π*u) * sin(b*π*v) + 4*v -2  \n"
+    zeq = "z = (a + sin(b*π*u)*sin(b*π*v)) * cos(c*π*v)   \n"
+        Coef = "a, b, c, \n"
+
+
+    #-----------------------------------------00000
+    # 'Formula 18 Boy Surface I
+    if surface_type == 18:
+
+        Def_uMin = 0 ; Def_uMax = math.pi
+        Def_vMin = 0 ; Def_vMax = math.pi
+        Def_scale = 4 ; Def_a=1
+    xeq = "x = (sqrt(2)*cos(v)^2 * cos(2*u) + cos(u)*sin(2*v) )/d \n"
+    yeq = "y = ( 3 * math.cos(v)**2 )/d \n"
+    zeq = "z = (sqrt(2)*cos(v)^2 * sin(2*u) + sin(u)*sin(2*v) )/d \n"
+        i = i + "Where \n"
+        i = i + "\n"
+        i = i + "d = 2 - a*(sqrt(2) * sin(3*u)*sin(2*v) ) \n"
+        i = i + "\n"
+        i = i + "When a = 0, describes the Roman surface\n"
+        i = i + "When a = 1, describes the Boy Surface I\n"
+        Coef = "a"
+
+
+
+    #-----------------------------------------00000
+    # 'Formula 19 Boy Surface II
+    if surface_type == 19:
+
+        Def_Nu = 30 ; Def_Nv = 50
+        Def_uMin = -math.pi/2 ; Def_uMax = math.pi/2
+        Def_vMin = 0 ; Def_vMax = math.pi
+        Def_scale = 6 ; Def_a=1
+    xeq = "x = (1/2)*( (2B^2-A^2-C^2)*(A^2+B^2+C^2) + 2*AC(A^2-C^2) +BC(B^2-C^2)+AB(A^2-B^2) ) \n"
+    yeq = "y = (1/2)*sqrt(3)*( (A^2-C^2)*(A^2+B^2+C^2) + B*C(C^2-B^2) + A*B(A^2-B^2)  )    \n"
+    zeq = "z = (1/8)*(A+B+C)*( (A+B+C)^3 + 4*(A-B)*(C-A)*(B-C)  )   \n"
+        i = i + "Where \n"
+        i = i + "\n"
+        i = i + "A = sin(u + b)sin(v + c) \n"
+        i = i + "B = cos(u + b)sin(v + c) \n"
+        i = i + "C = cos(v + c) \n"
+
+
+    #-----------------------------------------00000
+    # 'Formula 20 Lawson Bottle
+    if surface_type == 20:
+
+        Def_Nu = 60 ; Def_Nv = 60
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+    xeq = "x = (sin(u + b)sin(v + a)-sin(u/2 + b)cos(v + a))*(sqrt(2))/w  \n"
+    yeq = "y = cos(u + b)sin(v + a)/w  \n"
+    zeq = "z = cos(u/2 + b)cos(v + a)/w \n"
+        i = i + "Where \n"
+        i = i + "\n"
+        i = i + "w = 1 + (sin(u + b)sin(v + a)+sin(u/2 + b)cos(v + a))/sqrt(2)  \n"
+
+
+
+    #-----------------------------------------00000
+    # 'Formula 21 Drop
+    if surface_type == 21:
+
+        Def_Nu = 40 ; Def_Nv = 30
+        Def_uMin = 0 ; Def_uMax = math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 3; Def_b = 1; Def_c = 6
+    xeq = "x = a(b - cos(u))*sin(u)cos(v)  \n"
+    yeq = "y = c*cos(u)  \n"
+    zeq = "z = a(b - cos(u))*sin(u)sin(v) \n"
+        i = i + "\n"
+        i = i + "Drop: a >= b \n"
+        i = i + "Egg:  a < b \n"
+        Coef = "a,b,c"
+
+
+    #-----------------------------------------00000
+    # 'Formula 22 Apple
+    if surface_type == 22:
+
+        Def_Nu = 30 ; Def_Nv = 30
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = -math.pi ; Def_vMax = math.pi
+        Def_a = 3.7; Def_b = 3.7; Def_c = 2
+        Def_scale = 0.5
+    xeq = "x = cos(u)*(4 + a*cos(v)) \n"
+    yeq = "y = c*((cos(v) + sin(v) - 1)*(1 + sin(v))*log(|1 - π*v/10|) + bsin(v))  \n"
+    zeq = "z = sin(u)*(4 + a*cos(v))  \n"
+        i = i + "\n"
+        Coef = "a,b,c"
+
+
+    #-----------------------------------------00000
+    # 'Formula 23 Fruit
+    if surface_type == 23:
+
+        Def_Nu = 30 ; Def_Nv = 30
+        Def_uMin = -math.pi ; Def_uMax = math.pi
+        Def_vMin = -math.pi ; Def_vMax = math.pi
+        Def_a = 5; Def_b = 4.8; Def_c = 4.8
+        Def_d = 6; Def_e = 2
+        Def_scale=0.5
+
+    xeq = "x = cos(u)*(a + b*cos(v)) + (v/π) \n"
+    yeq = "y = -c*log(|1-v*0.3157|) + dsin(v) + ecos(v)  \n"
+    zeq = "z = sin(u)*(a + b*cos(v)) + 0.25*cos(5u) \n"
+        Coef = "a,b,c,d,e"
+
+    #-----------------------------------------00000
+    # 'Formula 24 Twisted Sphere
+    if surface_type == 24:
+
+        Def_Nu = 30 ; Def_Nv = 30
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = -math.pi ; Def_vMax = math.pi
+        Def_a = 2; Def_b = 2;
+
+    xeq = "x = a*cos(u)cos(v) \n"
+    yeq = "y = a*sin(v)+b*u  \n"
+    zeq = "z = a*sin(u)*cos(v) \n"
+        Coef = "a,b"
+
+
+    #-----------------------------------------00000
+    # 'Formula 25 Corkscrew
+    if surface_type == 25:
+
+        Def_Nu = 60 ; Def_Nv = 30
+        Def_uMin = -1 ; Def_uMax = 1
+        Def_vMin = -math.pi ; Def_vMax = math.pi
+        Def_a = 2; Def_b = 3; Def_c = 3; Def_d = 10
+
+    xeq = "x = a*(1 - |u|)*cos(v) + b(1 - |u|)*cos(u*c*π) \n"
+    yeq = "y = d*u  \n"
+    zeq = "z = a*(1 - |u|)*sin(v) + b(1 - |u|)*sin(u*c*π) \n"
+        Coef = "a,b,c,d"
+
+
+    #-----------------------------------------00000
+    # 'Formula 26 Asymetric Torus
+    if surface_type == 26:
+
+        Def_Nu = 60 ; Def_Nv = 30
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 5; Def_b = 1; Def_c = 1.5
+
+    xeq = "x = (a + b*cos(v)*(c + sin(u)))*cos(u)\n"
+    yeq = "y = b*math.sin(v)*(c + math.sin(u))  \n"
+    zeq = "z = (a + b*cos(v)*(c + sin(u)))*sin(u)\n"
+        Coef = "a,b,c"
+
+    #-----------------------------------------00000
+    # 'Formula 27 Tricuspid Torus
+    if surface_type == 27:
+
+        Def_Nu = 60 ; Def_Nv = 30
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 5; Def_b = 1;
+
+    xeq = "x = (a + b*(2cos(v) + cos(2v)))cos(u)    \n"
+    yeq = "y = b*(2*sin(v) - sin(2v))    \n"
+    zeq = "z = (a + b*(2cos(v) + cos(2v)))sin(u)    \n"
+        Coef = "a,b"
+
+
+    #-----------------------------------------00000
+    # 'Formula 28 Atroid Torus
+    if surface_type == 28:
+
+        Def_Nu = 60 ; Def_Nv = 30
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 5; Def_b = 2.5;
+
+    xeq = "x = (a + b*cos(v)^3)*cos(u)   \n"
+    yeq = "y = b*sin(v)^3    \n"
+    zeq = "z = (a + b*cos(v)^3)*sin(u)   \n"
+        Coef = "a,b"
+
+
+    #-----------------------------------------00000
+    # 'Formula 29 Umbilic Torus
+    if surface_type == 29:
+
+        Def_Nu = 60 ; Def_Nv = 30
+        Def_uMin = -math.pi ; Def_uMax = math.pi
+        Def_vMin = -math.pi ; Def_vMax = math.pi
+        Def_a = 7; Def_b = 2; Def_c = 3;
+
+    xeq = "x = sin(u)*(a + cos(u / c - b*v) + 2cos(u / c + v))  \n"
+    yeq = "y = sin(u / 3 - b*v) + 2sin(u / c + v)    \n"
+    zeq = "z = cos(u)*(a + cos(u / c - b*v) + 2cos(u / c + v))    \n"
+        Coef = "a,b,"
+
+    #-----------------------------------------00000
+    # 'Formula 30 8 Torus
+    if surface_type == 30:
+
+        Def_Nu = 60 ; Def_Nv = 30
+        Def_uMin = -math.pi ; Def_uMax = math.pi
+        Def_vMin = -math.pi ; Def_vMax = math.pi
+        Def_a = 3; Def_b = 2; Def_c = 2; Def_scale=2
+
+    xeq = "x = cos(u)*(a + sin(v)*cos(u) - sin(2*v)*sin(u)/2) \n"
+    yeq = "y = sin(u)*sin(v) + cos(u)*sin(2*v)/2  \n"
+    zeq = "z = sin(u)*(a + sin(v)*cos(u) - sin(2*v)*sin(u)/2)    \n"
+        Coef = "a,b"
+
+    #-----------------------------------------00000
+    # 'Formula 31 Wave Torus
+    if surface_type == 31:
+
+        Def_Nu = 60 ; Def_Nv = 30
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 5; Def_b = 2; Def_c = 0.5; Def_d = 5;
+
+    xeq = "x = (a + (b + c*sin(du))cos(v))cos(u)  \n"
+    yeq = "y = (b + c*sin(d*u))*sin(v)  \n"
+    zeq = "z = (a + (b + c*sin(du))cos(v))sin(u)\n"
+        Coef = "a,b,c,d"
+
+
+    #-----------------------------------------00000
+    # 'Formula 32 Gear Torus
+    if surface_type == 32:
+
+        Def_Nu = 60 ; Def_Nv = 60
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 2; Def_b = 1.5; Def_c = 4; Def_d = 0.5; Def_e = 1;
+
+    xeq = "x = (10d + Rcos(v))cos(u)\n"
+    yeq = "y = Rsin(v) \n"
+    zeq = "z = -(10d + Rcos(v))sin(u)  \n"
+        i = i + "\n"
+        i = i + "Where\n"
+        i = i + "\n"
+        i = i + "T = 2besin(c*v) \n"
+        i = i + "R = a*((exp(T)-1)/ (exp(T)+1))/b\n"
+        Coef = "a,b,c,d,e"
+
+
+    #-----------------------------------------00000
+    # 'Formula 33 Spiral Torus
+    if surface_type == 33:
+
+        Def_Nu = 100 ; Def_Nv = 40
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 5.5; Def_b = 2; Def_c = 6; Def_d = 1.5
+
+    xeq = "x = (a + bcos(c*u) + dcos(v))*cos(u) \n"
+    yeq = "y = d*sin(v) + bsin(c*u) \n"
+    zeq = "z = (a + bcos(c*u) + dcos(v))*sin(u)   \n"
+        Coef = "a,b,c,d"
+
+    #-----------------------------------------00000
+    # 'Formula 34 Torus Knots I
+    if surface_type == 34:
+
+        Def_Nu = 130 ; Def_Nv = 34
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 5.5 ; Def_b = 2; Def_c = 1.5;
+        Def_d = 7; Def_e = 3
+
+    xeq = "x = -T*cos(e*u)    \n"
+    yeq = "y = c * sin(v) + b * sin(d * u)   \n"
+    zeq = "z = T*sin(e*u)   \n"
+        i = i + "\n"
+        i = i + "Where \n"
+        i = i + "\n"
+        i = i + "T = a + b*cos(d*u) + c*cos(v) \n"
+        Coef = "a,b,c,d,e"
+
+
+
+    #-----------------------------------------00000
+    # 'Formula 35 Torus Multi Shape
+    if surface_type == 35:
+
+        Def_Nu = 80 ; Def_Nv = 30
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 7 ; Def_b = 2; Def_c = 1;
+        Def_d = 0.2;
+
+    xeq = "x = cos(u)^c * (a + bcos(v)^d)   \n"
+    yeq = "y = bsin(v)^d   \n"
+    zeq = "z = sin(u)^c * (a + bcos(v)^d)   \n"
+        i = i + "Where \n"
+        i = i + "\n"
+        i = i + "a = inner radius   \n"
+        i = i + "b = outer radius   \n"
+        i = i + "Note: Since the values are defined for the first quadrant, this  "
+        i = i + "correction was made: \n"
+        i = i + "\n"
+        i = i + "x^n = sign(x)*abs(x)^n \n"
+        Coef = "a,b,c,d"
+
+
+    #-----------------------------------------00000
+    # 'Formula 36 Braided Torus
+    if surface_type == 36:
+
+        Def_Nu = 220 ; Def_Nv = 30
+        Def_uMin = 0 ; Def_uMax = 8*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 0.1 ; Def_b = 6; Def_c = 0.2;
+        Def_d = 1.25; Def_e = 10
+
+    xeq = "x = a*cos(v)*cos(u) + b*cos(u)(1 + c*cos(du)) \n"
+    yeq = "y = e*(a*sin(v) + c*sin(du)) \n"
+    zeq = "z = a*cos(v)*cos(u) + b*sin(u)(1 + c*cos(du)) \n"
+
+        Coef = "a,b,c,d,e"
+
+    #-----------------------------------------00000
+    # 'Formula 37 Klein Cicloid
+    if surface_type == 37:
+
+        Def_Nu = 200 ; Def_Nv = 15
+        Def_uMin = 0 ; Def_uMax = 2*3*2*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 11 ; Def_b = 3; Def_c = 2;
+
+    xeq = "x = cos(u/c)*cos(u/b)*(a+cos(v)) + sin(u/b)*sin(v)*cos(v) \n"
+    yeq = "y = -sin(u/b)*(a + cos(v)) + cos(u/b)*sin(v)*cos(v)\n"
+    zeq = "z = sin(u/c)*cos(u/b)*(a+cos(v)) + sin(u/b)*sin(v)*cos(v)\n"
+        i = i + "uMax recomended:\n"
+        i = i + "2*b*c*pi"
+
+        Coef = "a,b,c"
+
+    #-----------------------------------------00000
+    # 'Formula 38 Sine Wave
+    if surface_type == 38:
+
+        Def_Nu = 50 ; Def_Nv = 30
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = 4*math.pi
+        Def_a = 1; Def_c = 1; Def_d = 0;Def_e = 0.5
+
+    xeq = "x = e*v*cos(u) \n"
+    yeq = "y = e*a*(cos(b*v + c*v) - d * v) \n"
+    zeq = "z = e*v*sin(u) \n"
+
+        Coef = "a,b,c,d,e"
+
+
+    #-----------------------------------------00000
+    # 'Formula 39 Jenner-Klein Bottle
+    if surface_type == 39:
+
+        Def_Nu = 100 ; Def_Nv = 30
+        Def_uMin = 0 ; Def_uMax = 2*math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 1; Def_b = 2; Def_c = 4
+        Def_scale = 2;
+
+    xeq = "x = b*cos(u) + cos(b*u) - C*sin((b-1) * u/2) * cos(v + e)   \n"
+    yeq = "y = C*sin(v + e)    \n"
+    zeq = "z = b*sin(u) - sin(b*u) - C*cos((b-1) * u/2) * cos(v + e)   \n"
+        i = i + "Where\n"
+        i = i + "\n"
+        i = i + "C = ((b+1)/4)*cos((b+1) * u + d + 180/(c)) + sqrt(a) \n"
+
+        Coef = "a,b,c"
+
+
+    #-----------------------------------------00000
+    # 'Formula 40 Gear Tube
+    if surface_type == 40:
+
+        Def_Nu = 1 ; Def_Nv = 60
+        Def_uMin = -7 ; Def_uMax = 7
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 2; Def_b = 5; Def_c = 7; Def_d = 5;
+
+    xeq = "x = R * math.cos(v) \n"
+    yeq = "y = R * math.sin(v) \n"
+    zeq = "z = u\n"
+        i = i + "Where\n"
+        i = i + "\n"
+        i = i + "T = d*b*sin(c*v) \n"
+        i = i + "R = a*((exp(T)-1)/ (exp(T)+1))/b\n"
+        Coef = "a,b,c,d"
+
+    #-----------------------------------------00000
+    # 'Formula 41 Dini's Surface
+    if surface_type == 41:
+
+        Def_Nu = 60 ; Def_Nv = 60
+        Def_uMin = 0 ; Def_uMax = 4*math.pi
+        Def_vMin = 0 ; Def_vMax = 2
+        Def_a = 1.5; Def_b = 0.5
+
+    xeq = "x = a*cos(u)sin(v)   \n"
+    yeq = "y = a*( cos(v) + ln( tan(v/2) ) )+bu  \n"
+    zeq = "z = a*sin(u)sin(v)   \n"
+        Coef = "a,b"
+
+    #-----------------------------------------00000
+    # 'Formula 42 WaveBall
+    if surface_type == 42:
+
+        Def_Nu = 60 ; Def_Nv = 60
+        Def_uMin = 0 ; Def_uMax = 14.5
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 0.5; Def_b = 0.5
+
+    xeq = "x = a*u*cos( cos(u) )*cos(v)  \n"
+    yeq = "y = b*u*sin( cos(u) ) \n"
+    zeq = "z = a*u*cos( cos(u) )*sin(v)  \n"
+
+        Coef = "a,b"
+
+
+
+    #-----------------------------------------00000
+    # 'Formula 43 Hyperbolic Helicoid
+    if surface_type == 43:
+
+        Def_Nu = 400 ; Def_Nv = 10
+        Def_uMin = -4 ; Def_uMax = 4
+        Def_vMin = -4 ; Def_vMax = 4
+        Def_a = 6; Def_scale = 5
+
+    xeq = "x = sinh(v)*cos(a*u)/( 1 + cosh(u)*cosh(v) )  \n"
+    yeq = "y = cosh(v)*sinh(u)/( 1 + cosh(u)*cosh(v) ) \n"
+    zeq = "z = sinh(v)*sin(a*u)/( 1 + cosh(u)*cosh(v) )  \n"
+
+        Coef = "a"
+
+
+    #-----------------------------------------00000
+    # 'Formula 44 Umbrella Surface
+    if surface_type == 44:
+
+        Def_Nu = 12 ; Def_Nv = 60
+        Def_uMin = 0 ; Def_uMax = 1
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 6; Def_b = 3; Def_c = 8; Def_d = 3; Def_e = 8
+
+    xeq = "x = u^(p) * ( (a-r)*cos(v) + (f/10)*r*cos( (c-1)*v )    \n"
+    yeq = "y = b*(1-u) \n"
+    zeq = "z = u^(p) * ( (a-r)*sin(v) + s*(f/10)*r*sin( (c-1)*v )    \n"
+        i = i + "Where\n"
+        i = i + "\n"
+        i = i + "p = 1/d  \n"
+        i = i + "r = a/c  \n"
+        i = i + "s = 0 - (e>=1) + (e<1)  \n"
+        Coef = "a,b,c"
+
+    #-----------------------------------------00000
+    # 'Formula 45 Tudor Rose
+    if surface_type == 45:
+
+        Def_Nu = 160 ; Def_Nv = 60
+        Def_uMin = 0 ; Def_uMax = math.pi
+        Def_vMin = 0 ; Def_vMax = 2*math.pi
+        Def_a = 0.9; Def_b = 0.2; Def_c = 4; Def_d=8
+        Def_scale = 5
+
+    xeq = "x = R*cos(u)*cos(v)   \n"
+    yeq = "y = R*sin(v)*0.5  \n"
+    zeq = "z = R*sin(u)*cos(v)  \n"
+        i = i + "Where\n"
+        i = i + "\n"
+        i = i + "R = cos(v)*cos(v) * max(abs(sin(c*u)), a-b*abs(cos(d*u)))  \n"
+        Coef = "a,b,c,d"
+
+
+    #-----------------------------------------00000
+    # 'Formula 46 Crossed Through surface
+    if surface_type == 46:
+
+        Def_Nu = 80 ; Def_Nv = 50
+        Def_uMin = -1 ; Def_uMax = 1
+        Def_vMin = 0 ; Def_vMax = pi
+        Def_a = 2; Def_b = 10; Def_c = 2; Def_d = 4
+        Def_scale = 7
+
+
+    xeq = "x = usin(v)  \n"
+    yeq = "y = (a* u^4 *sin(2*v)^2 )/4  \n"
+    zeq = "z = ucos(v)  \n"
+
+        Coef = "a"
+
+    #-----------------------------------------00000
+    # 'Formula 47 Spiral waves
+    if surface_type == 47:
+
+        Def_Nu = 80 ; Def_Nv = 50
+        Def_uMin = 0 ; Def_uMax = 2*pi
+        Def_vMin = 0 ; Def_vMax = 20
+        Def_a = 1; Def_b = 3; Def_c = 1
+        Def_scale = 0.4
+
+    xeq = "x = v*cos(u)  \n"
+    yeq = "y = a*cos(b*u + c*v) \n"
+    zeq = "z = v*sin(u)  \n"
+
+        Coef = "a,b,c"
+
+
+    #-----------------------------------------00000
+    # 'Formula 48 Elliptic Torus
+    if surface_type == 48:
+
+        Def_Nu = 80 ; Def_Nv = 50
+        Def_uMin = 0 ; Def_uMax = 2*pi
+        Def_vMin = 0 ; Def_vMax = 2*pi
+        Def_a = 3; Def_scale=2
+
+    xeq = "x = (c + cos (v)) cos (u)  \n"
+    yeq = "y = sin (v) + cos (v)  \n"
+    zeq = "z = (c + cos (v)) sin (u) \n"
+
+        Coef = "a"
+
+    #-----------------------------------------00000
+    # 'Formula 49 Involute Conoid
+    if surface_type == 49:
+
+        Def_Nu = 20 ; Def_Nv = 80
+        Def_uMin = 0 ; Def_uMax = 10
+        Def_vMin = 0 ; Def_vMax = 5*pi
+        Def_a = 0.05; Def_b = 2; Def_c = 10
+
+    xeq = "x = a*c*( cos(v)+v*sin(v)) \n"
+    yeq = "y = ub \n"
+    zeq = "z = a*u*( sin(v)-v*cos(v)) \n"
+
+        Coef = "a,b,c"
+
+    #-----------------------------------------00000
+    # 'Formula 50 Stereographic Sphere
+    if surface_type == 50:
+
+        Def_Nu = 71 ; Def_Nv = 71
+        Def_uMin = -10 ; Def_uMax = 10
+        Def_vMin = -10 ; Def_vMax = 10
+        Def_a = 2; Def_b = 5
+
+    xeq = "x = a*u / D   \n"
+    yeq = "y = b*D-2       \n"
+    zeq = "z = a*v / D   \n"
+        i = i + "Where \n"
+        i = i + "D = u^2 + v^2 + 1"
+        Coef = "a,b"
+
+    #-----------------------------------------00000
+    # 'Formula 51 Cross Cap
+    if surface_type == 51:
+
+        Def_Nu = 70 ; Def_Nv = 70
+        Def_uMin = 0 ; Def_uMax = 1
+        Def_vMin = 0 ; Def_vMax = 2*pi
+        Def_a = 2; Def_b = 2; Def_scale = 6
+
+    xeq = "x = 1 - u^2 + u^2 * sin(v)^2  \n"
+    yeq = "y = u^2 * sin(v)^2 + a*u^2 *sin(v)*cos(v)      \n"
+    zeq = "z = sqrt( (1-u^2)/b )*u*( sin(v)+cos(v) )  \n"
+        Coef = "a,b"
+
+    #-----------------------------------------00000
+    # 'Formula 52 Strophoid cylinder
+    if surface_type == 52:
+
+        Def_Nu = 70 ; Def_Nv = 70
+        Def_uMin = -pi ; Def_uMax = pi
+        Def_vMin = -2 ; Def_vMax = 2
+        Def_a = 2; Def_b = 2;
+
+    xeq = "x = ( b + D )*cos(u) \n"
+    yeq = "y = v*D      \n"
+    zeq = "z = ( b + D )*sin(u)    \n"
+        i = i + "Where"
+        i = i + "\n"
+        i = i + "D = a*(v^2 -1)/(v^2 + 1)"
+        Coef = "a,b"
+
+    #-----------------------------------------00000
+    # 'Formula 53 Fish Surface
+    if surface_type == 53:
+
+        Def_Nu = 70 ; Def_Nv = 70
+        Def_uMin = 0 ; Def_uMax = pi
+        Def_vMin = 0 ; Def_vMax = 2*pi
+        Def_a = 2; Def_b = 4; Def_scale = 3
+
+    xeq = "x = (cos(u) - cos(2u))cos (v) / 4  \n"
+    yeq = "y = (sin(u) - sin(2u))sin (v) / 4  \n"
+    zeq = "z = cos(u)     \n"
+        Coef = "a,b"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    info = xeq + yeq + zeq + i
+
+
+    # Update default values on controllers
+
+    op[c4d.ID_USERDATA,5] = Def_Nu
+    op[c4d.ID_USERDATA,6] = Def_Nv
+    op[c4d.ID_USERDATA,7] = Def_uMin
+    op[c4d.ID_USERDATA,8] = Def_vMin
+    op[c4d.ID_USERDATA,9] = Def_uMax
+    op[c4d.ID_USERDATA,10] = Def_vMax
+    op[c4d.ID_USERDATA,32] = percent_u
+    op[c4d.ID_USERDATA,33] = percent_v
+    op[c4d.ID_USERDATA,12] = Def_a
+    op[c4d.ID_USERDATA,13] = Def_b
+    op[c4d.ID_USERDATA,14] = Def_c
+    op[c4d.ID_USERDATA,15] = Def_d
+    op[c4d.ID_USERDATA,16] = Def_e
+    op[c4d.ID_USERDATA,30] = Def_f
+    op[c4d.ID_USERDATA,19] = Def_ornt
+    op[c4d.ID_USERDATA,20] = Def_scale
+    op[c4d.ID_USERDATA,22] = Def_as_x
+    op[c4d.ID_USERDATA,23] = Def_as_y
+    op[c4d.ID_USERDATA,24] = Def_as_z
+    op[c4d.ID_USERDATA,18] = info        #equations
+    op[c4d.ID_USERDATA,26] = Name     #Name
+    op[c4d.ID_USERDATA,28] = Coef   #Coefficients
+    op[c4d.ID_USERDATA,34] = guv_x
+    op[c4d.ID_USERDATA,35] = guv_y
+    op[c4d.ID_USERDATA,36] = guv_z
+    op[c4d.ID_USERDATA,37] = u_rot
+    op[c4d.ID_USERDATA,38] = v_rot
+
+    
+
+
+
+
+
+#-----------------------------------------------------------------------------------------
+# Function to read data from controllers and uptade values
+
+def read_set'
+
+    # Using global variables of values
+    global surface_type, Nu, Nv, uMin, uMax, vMin ,vMax,percent_u,percent_v
+    global ornt, scale, as_x, as_y, as_z, guv_x, guv_y, guv_z, u_rot, v_rot
+    global a, b, c, d, e, f,weld
+
+    # Read info from controllers and assign to values
+    surface_type = op[c4d.ID_USERDATA,2]
+    Nu = op[c4d.ID_USERDATA,5]
+    Nv = op[c4d.ID_USERDATA,6]
+    uMin = op[c4d.ID_USERDATA,7]
+    vMin = op[c4d.ID_USERDATA,8]
+    uMax = op[c4d.ID_USERDATA,9]
+    vMax = op[c4d.ID_USERDATA,10]
+    percent_u = op[c4d.ID_USERDATA,32]
+    percent_v = op[c4d.ID_USERDATA,33]
+    a = op[c4d.ID_USERDATA,12]
+    b = op[c4d.ID_USERDATA,13]
+    c = op[c4d.ID_USERDATA,14]
+    d = op[c4d.ID_USERDATA,15]
+    e = op[c4d.ID_USERDATA,16]
+    f = op[c4d.ID_USERDATA,30]
+    ornt = op[c4d.ID_USERDATA,19]
+    scale = op[c4d.ID_USERDATA,20]
+    as_x = op[c4d.ID_USERDATA,22]
+    as_y = op[c4d.ID_USERDATA,23]
+    as_z = op[c4d.ID_USERDATA,24]
+    weld = op[c4d.ID_USERDATA,25]
+    guv_x = op[c4d.ID_USERDATA,34]
+    guv_y = op[c4d.ID_USERDATA,35]
+    guv_z = op[c4d.ID_USERDATA,36]
+    u_rot = op[c4d.ID_USERDATA,37]
+    v_rot = op[c4d.ID_USERDATA,38]
+
+    
+
+
+
+#-----------------------------------------------------------------------------------------
+# Function to generate object
+
+def generate_object'
+
+    p_Nu = int(ceil(Nu*percent_u) )
+    p_Nv = int(ceil(Nv*percent_v) )
+
+    dif_u = (uMax-uMin)*percent_u - (p_Nu-1)*((uMax-uMin) / Nu)
+    dif_v = (vMax-vMin)*percent_v - (p_Nv-1)*((vMax-vMin) / Nv)
+
+
+    # Number of points
+    obj.ResizeObject ((p_Nu+1) * (p_Nv+1) , p_Nu* p_Nv)
+
+    #Counter
+zz = 0
+
+    #Execute 'formulas
+    exec("'Formula"+str(surface_type)+"()")
+
+    # Create points
+    for i in range (0, p_Nu+1):
+        for j in range (0, p_Nv+1):
+
+            # Calculation of the parameters
+
+            # Calculate segment widths
+            du = (uMax-uMin) / Nu
+            dv = (vMax-vMin) / Nv
+
+
+            u = uMin + i * du + (-du + dif_u)*(i==(p_Nu)) + u_rot
+            v = vMin + j * dv + (-dv + dif_v)*(j==(p_Nv)) + v_rot
+
+        x = (xf(u,v))*(1-guv_x) + u*guv_x
+        y = (yf(u,v))*(1-guv_y) + v*guv_y
+        z = (zf(u,v))*(1-guv_z)
+
+            # Set aspect ratio, scale and orientation
+
+            save_c = 0     # Buffer
+
+            if ornt == 0 or ornt == 1:
+            y = y * (ornt == 0) - y * (ornt == 1)
+
+            if ornt == 2 or ornt == 3:
+                save_c = x
+            x = y * (ornt == 2) - y * (ornt == 3)
+            y = save_c
+
+            if ornt == 4 or ornt == 5:
+                save_c = z
+            z = y * (ornt == 4) - y * (ornt == 5)
+            y = save_c
+
+            save_c=0
+
+
+
+        x_end = x * as_x * scale
+        y_end = y * as_y * scale
+        z_end = z * as_z * scale
+
+
+
+            # Save points
+            obj.SetPoint (zz, c4d.Vector (x_end, y_end, z_end))
+
+            # Increase counter
+        zz = zz + 1
+
+
+    # Create polygons and UVW
+
+    if obj.GetTag(c4d.Tuvw): # If there is a UVW tag
+        UVW = obj.GetTag(c4d.Tuvw) # Select it
+        
+zz = 0 # reset counter
+
+    for j in range (0, p_Nv):
+        for i in range (0, p_Nu):
+
+
+
+            # Define points for a square
+            P1 = i * (p_Nv +1) + j
+            P2 = i * (p_Nv +1) + j + 1
+            P3 = (i + 1) * (p_Nv +1) + j + 1
+            P4 = (i + 1) * (p_Nv +1) + j
+
+
+            # Save square
+            obj.SetPolygon (zz, c4d.CPolygon (P1, P2, P3, P4))
+
+            # Update UVW Map
+
+            if op[c4d.ID_USERDATA,31] == 1:
+                du0 = float(1)/Nu * i
+                dv0 = float(1)/Nv * j
+                du1 = du0 + float(1)/Nu
+                dv1 = dv0 + float(1)/Nv
+
+                UP0 = c4d.Vector(du0,dv0,0)
+                UP1 = c4d.Vector(du0,dv1,0)
+                VP0 = c4d.Vector(du1,dv0,0)
+                VP1 = c4d.Vector(du1,dv1,0)
+                UVW.SetSlow(zz,UP0,UP1,VP1,VP0)
+
+            # Increase counter
+        zz = zz + 1
+
+    # If weld checked
+    if weld == 1:
+
+        opt=c4d.BaseContainer()
+        opt[c4d.MDATA_OPTIMIZE_TOLERANCE]=0.00001
+        opt[c4d.MDATA_OPTIMIZE_POINTS]=1
+        opt[c4d.MDATA_OPTIMIZE_POLYGONS]=1
+        opt[c4d.MDATA_OPTIMIZE_UNUSEDPOINTS]=1
+
+        res=utils.SendModelingCommand( command = c4d.MCOMMAND_OPTIMIZE,
+                                        list = [obj],
+                                        mode = c4d.MODELINGCOMMANDMODE_ALL,
+                                        bc = opt,
+                                        doc = doc)
+
+    obj.Message (c4d.MSG_UPDATE)
+
+    
+
+
+
+
+
+#-----------------------------------------------------------------------------------------
+
+# Function to react to changes
+
+def message(id,data) :
+
+    if id == c4d.MSG_DESCRIPTION_POSTSETPARAMETER:
+        event_type = data["descid"][1].dtype
+
+        # Check if value
+        if event_type == c4d.DTYPE_LONG or c4d.DTYPE_REAL:
+
+            # get id
+            valueID = data["descid"][1].id
+
+            # if another surface selected
+            if valueID == 2:
+                read_set()        # read selected surface
+                set_default()     # set intern values to defaults
+
+            # read values and update
+            read_set()
+
+            # generate object
+            generate_object()
+
+
+
+    if id == c4d.MSG_DESCRIPTION_CHECKUPDATE:
+        desc_id = data['descid']
+        long_button=len(desc_id)
+
+        # Check no key button
+        if long_button == 2:
+            event_type = data["descid"][1].dtype
+
+            # Check if button
+            if event_type == c4d.DTYPE_BUTTON:
+                # get id
+                buttonID = data["descid"][1].id
+
+                # set to default values
+                read_set()         # read selected surface
+                set_default()
+                read_set()
+
+                #generate object
+                generate_object()
+
+
+    
+
+
+
+
+def main'
+    pass  #No specific code to run repeatedly

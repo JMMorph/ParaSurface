@@ -1,0 +1,9 @@
+segments 40 40
+u 0 6.2832
+v 0 6.2832
+coefs 0
+scale 30
+
+x = (sin(u+a)*sin(v) - sin(u/2 +a)*cos(v))*(sqrt(0.5))/(1 + (sin(u+a)*sin(v) + sin(u/2 +a)*cos(v)) / sqrt(2))
+y = cos(u+a)*sin(v)/(1 + (sin(u+a)*sin(v) + sin(u/2 +a)*cos(v)) / sqrt(2))
+z = cos(u/2 +a )*cos(v)/(1 + (sin(u+a)*sin(v) + sin(u/2 +a)*cos(v)) / sqrt(2))

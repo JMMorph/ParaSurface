@@ -1,0 +1,9 @@
+segments 60 40
+u -1 1
+v -3.1416 3.1416
+coefs 2, 3, 3, 10
+scale 10
+
+x = a*(1-abs(u))*cos(v) + b*(1-abs(u))*cos(u*c*pi)
+y = d*u
+z = a*(1-abs(u))*sin(v) + b*(1-abs(u))*sin(u*c*pi)

@@ -1,0 +1,9 @@
+segments 100 30
+u 0 6.2838
+v 0 6.2838
+coefs 1, 2, 4, 0
+scale 40
+
+x = b * cos(u) + cos(b * u) - (((b+1) / 4) * cos((b+1) * u + d + 180/(c+0.0001)) + sqrt(a)) * sin((b-1) * u/2) * cos(v + e)
+y = (((b+1) / 4) * cos((b+1) * u + d + 180/(c+0.0001)) + sqrt(a)) * sin(v + e)
+z = b * sin(u) - sin(b * u) - (((b+1) / 4) * cos((b+1) * u + d + 180/(c+0.0001)) + sqrt(a)) * cos((b-1) * u/2) * cos(v + e)

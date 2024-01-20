@@ -1,0 +1,9 @@
+segments 30 40
+u -3.1416 3.1416
+v -3.1416 3.1416
+coefs
+scale 40
+
+x = sin(u) / (sqrt(2) + sin(v))
+y = cos(u) / (sqrt(2) + 1)
+z = sin(u) / (sqrt(2) + cos(v))
