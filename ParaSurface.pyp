@@ -290,6 +290,7 @@ class ParaSurface (plugins.ObjectData):
     # Function to read the attributes from the interface and create the surface object
     def GetVirtualObjects(self, op, hh, restart_gui=False):
         surface_type = op[c4d.SURF_TYPE]
+        
         if surface_type != self.current_surface_type:
             self.current_surface_type = surface_type
             self.surf_obj_init = surfaceFromFile(SURFACE_PATH, surface_type)
@@ -298,7 +299,7 @@ class ParaSurface (plugins.ObjectData):
             if restart_gui:
                 self.SetFromSurface(op, self.surf_obj)
                 
-            op.Message(c4d.MSG_UPDATE)
+            # op.Message(c4d.MSG_UPDATE)
             
         
         # If custom
@@ -388,7 +389,16 @@ class ParaSurface (plugins.ObjectData):
                 v = s.v_min + j * dv + (-dv + dif_v)*(j==(p_Nv)) + s.v_offset
                 
                 # Calculate x, y, z without modifications
-                xf, yf, zf = s.eval(u, v)
+                
+                try:
+                    xf, yf, zf = s.eval(u, v)
+                except ZeroDivisionError:
+                    print('ZeroDivisionError')
+                    xf, yf, zf = 0, 0, 0
+                except:
+                    print('Error, verify the equations')
+                    xf, yf, zf = 0, 0, 0
+                    
 
                 # Update x, y, z with modifications (considering the grid U,V likeness)
                 x = (xf)*(1-s.grid_x) + u*s.grid_x
@@ -488,10 +498,12 @@ class ParaSurface (plugins.ObjectData):
                 self.surf_obj = copy.deepcopy(self.surf_obj_init)              
                 self.SetFromSurface(node, self.surf_obj)
                 self.GetVirtualObjects(node, None, restart_gui=True)
-                node.Message(c4d.MSG_UPDATE)
+                # node.Message(c4d.MSG_UPDATE)
         
+        # If one parameter in the interface has changed
         elif type == c4d.MSG_DESCRIPTION_POSTSETPARAMETER:
 
+            # If the surface type has changed
             if data['descid'][0].id == c4d.SURF_TYPE:
                 
                 surface_type = node[c4d.SURF_TYPE]
@@ -501,7 +513,7 @@ class ParaSurface (plugins.ObjectData):
                     self.surf_obj_init = copy.deepcopy(surface_obj)
                     self.surf_obj = copy.deepcopy(surface_obj)
                     self.SetFromSurface(node, self.surf_obj)
-                    node.Message(c4d.MSG_UPDATE)
+
         
         # Mesage received just before the interface is displayed
         
