@@ -1,3 +1,10 @@
+'''
+Developed by J. Miguel Medina @JMMorph
+
+ParaSurface is a Cinema 4D plugin that allows you to create parametric surfaces from mathematical expressions.
+
+'''
+
 import c4d
 from c4d import plugins, bitmaps, Vector, SplineObject, utils
 
@@ -9,11 +16,6 @@ import copy
 
 # Constants
 COEF_NAMES = 'abcdfghijklmnopqrst'
-
-# ID of the custom surface object
-SURFACE_OBJECT_BASE = 3000
-SURFACE_OBJECT = 3001
-
 SURFACE_PATH = os.path.join(os.path.dirname(__file__), 'res/surfaces/')
 
 # Function to parse a mathematical expression
@@ -231,12 +233,10 @@ class ParaSurface (plugins.ObjectData):
         self.surf_obj = copy.deepcopy(self.surf_obj_init)
         self.current_surface_type = initial_surface_type
 
-    # Necessary to make the plugin work, but not used
-    # Instead, the attributes are initialized in the Message function
     def Init(self, node, isCloneInit=False):
-        pass
+        self.SetFromSurface(node, self.surf_obj)
+        return True
 
-    
     # Function to initialize the attributes in the interface from the surface object
     def SetFromSurface(self, op, surface_obj):
         op[c4d.SURF_TYPE] = surface_obj.surface_type
@@ -555,7 +555,6 @@ class ParaSurface (plugins.ObjectData):
             self.InitAttr(node, str, [c4d.SURF_SURFACE_NAME])
             self.InitAttr(node, str, [c4d.SURF_SURFACE_COEFFICIENTS])
             self.InitAttr(node, str, [c4d.SURF_SURFACE_EQUATIONS])
-            self.InitAttr(node, parametricSurface, [SURFACE_OBJECT_BASE])
             
             # Initialize the coefficients
             for i in COEF_NAMES:
@@ -568,9 +567,6 @@ class ParaSurface (plugins.ObjectData):
             phongTag[c4d.PHONGTAG_PHONG_ANGLE] = radians(80)
             node.InsertTag(phongTag)
             self.SetFromSurface(node, self.surf_obj)
-            
-
-                
 
         return True
 
