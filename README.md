@@ -8,7 +8,7 @@ This plugin allows you to **create** and **animate** any ***3D parametric surfac
 
 There are multiple animatable parameters, from the number of points across the u and v axis to the value of the coefficients (constants) used in the equations. Also, you can change general properties as the scale, the orientation, the aspect ratio, and even the grid(u,v) surface relation. Check the tutorial below! . :point_down:
 
-
+You can download it for free at https://jmmorph.gumroad.com/l/ParaSurface just typing "0" in the price section, or other quantity if you want to make a donation. You can also clone this repository or directly download the .zip file from github.
 
 
 
