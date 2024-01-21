@@ -34,7 +34,7 @@ A new generator will be added to the scene! By default a Lawson Klein Bottle wil
 ![Default object](./images/Default.jpg)
 
 
-All parameters are defined by the classif GUI elements from cinema 4D, like float fields, sliders, text boxes, etc... you can customize the parameters used by the predefined surfaces like this:
+All parameters are defined by the classic GUI elements from cinema 4D, like float fields, sliders, text boxes, etc... you can customize the parameters used by the predefined surfaces like this:
 
 ![Default object](./images/ChangeParameters.jpg)
 
