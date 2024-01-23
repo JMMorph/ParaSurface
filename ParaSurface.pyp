@@ -393,10 +393,10 @@ class ParaSurface (plugins.ObjectData):
                 try:
                     xf, yf, zf = s.eval(u, v)
                 except ZeroDivisionError:
-                    print('ZeroDivisionError')
+                    #print('ZeroDivisionError')
                     xf, yf, zf = 0, 0, 0
                 except:
-                    print('Error, verify the equations')
+                    #print('Error, verify the equations')
                     xf, yf, zf = 0, 0, 0
                     
 
