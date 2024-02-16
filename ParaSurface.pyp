@@ -283,7 +283,9 @@ class ParaSurface (plugins.ObjectData):
         # Initialize the coefficients        
         for i in COEF_NAMES:
             descid = c4d.DescID(c4d.DescLevel(c4d.SURF_NUMBER_COEFFICIENTS + 1 + COEF_NAMES.index(i), c4d.DTYPE_REAL, op.GetType()))
-            op[descid[0].id] = surface_obj.coefficients.get(i, 0)  
+            
+            op.SetParameter(descid[0].id, float(surface_obj.coefficients.get(i, 0)), c4d.DESCFLAGS_SET_0)
+            
         
         return True
     
@@ -558,8 +560,8 @@ class ParaSurface (plugins.ObjectData):
             
             # Initialize the coefficients
             for i in COEF_NAMES:
-                descid = c4d.DescID(c4d.DescLevel(c4d.SURF_NUMBER_COEFFICIENTS + 1 + COEF_NAMES.index(i), c4d.DTYPE_REAL, node.GetType()))
-                self.InitAttr(node, float, [descid[0].id])   
+                descid = c4d.DescID(c4d.DescLevel(c4d.SURF_NUMBER_COEFFICIENTS + 1 + COEF_NAMES.index(i), c4d.DTYPE_REAL))
+                self.InitAttr(node, float, [descid[0].id]) 
             
             # Insert a phong tag by default
             phongTag = c4d.BaseTag(c4d.Tphong)
