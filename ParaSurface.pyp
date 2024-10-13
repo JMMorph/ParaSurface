@@ -26,7 +26,7 @@ def parse_expression(equations, auxiliar_equation = None, coefficients = {}):
     allowed_names |= {"abs", "max", "min", "aux"}  # Other common functions
     allowed_names |= set(coefficients.keys())  # Constants defined by the user
     allowed_names |= {"u", "v"} # Parameters of the surface
-
+    
     # Check if the expressions are valid
     for equation_str in equations:
         # Use ast to parse the expression
@@ -193,6 +193,10 @@ def surfaceFromFile(path,surface_type):
         v_min, v_max = [float(i) for i in lines[2].split()[1::]]
         
         coefficients = {i:float(j) for i,j in zip(COEF_NAMES, lines[3].split()[1::])}
+        
+        if f == 'custom':
+            coefficients = {c: 1 for c in COEF_NAMES}
+            
         scale = float(lines[4].split()[1])
 
         # Identify the x, y, z equations        
@@ -267,7 +271,8 @@ class ParaSurface (plugins.ObjectData):
             op[c4d.SURF_SURFACE_NAME] = 'Custom'
             op[c4d.SURF_SURFACE_COEFFICIENTS] = '-'
             op[c4d.SURF_SURFACE_EQUATIONS] = '-'
-            surface_obj.coefficients = {c: 0 for c in COEF_NAMES}
+            surface_obj.coefficients = {c: 1 for c in COEF_NAMES}
+            
             
             op[c4d.SURF_CUSTOM_X] = surface_obj.eq_x
             op[c4d.SURF_CUSTOM_Y] = surface_obj.eq_y
@@ -310,7 +315,7 @@ class ParaSurface (plugins.ObjectData):
             y = op[c4d.SURF_CUSTOM_Y].strip().replace('\n', '').replace('\r', '')
             z = op[c4d.SURF_CUSTOM_Z].strip().replace('\n', '').replace('\r', '')
             auxiliar_equation = op[c4d.SURF_CUSTOM_AUX].strip().replace('\n', '').replace('\r', '')
-            
+            print('HERE: ', self.surf_obj.coefficients)
             # Parse the equations
             eq_x, eq_y, eq_z = parse_expression([x, y, z], auxiliar_equation, self.surf_obj.coefficients)
             self.surf_obj.set_equations(eq_x, eq_y, eq_z)
