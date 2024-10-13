@@ -315,7 +315,7 @@ class ParaSurface (plugins.ObjectData):
             y = op[c4d.SURF_CUSTOM_Y].strip().replace('\n', '').replace('\r', '')
             z = op[c4d.SURF_CUSTOM_Z].strip().replace('\n', '').replace('\r', '')
             auxiliar_equation = op[c4d.SURF_CUSTOM_AUX].strip().replace('\n', '').replace('\r', '')
-            print('HERE: ', self.surf_obj.coefficients)
+
             # Parse the equations
             eq_x, eq_y, eq_z = parse_expression([x, y, z], auxiliar_equation, self.surf_obj.coefficients)
             self.surf_obj.set_equations(eq_x, eq_y, eq_z)
